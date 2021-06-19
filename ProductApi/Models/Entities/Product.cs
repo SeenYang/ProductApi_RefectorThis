@@ -16,6 +16,8 @@ namespace ProductApi.Models.Entities
 
         [Required] public decimal DeliveryPrice { get; set; }
 
+        public int Status { get; set; }
+
         public List<ProductOption> ProductOptions { get; set; }
     }
 }

@@ -1,6 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using ProductApi.Helpers;
 using ProductApi.Models.Dtos;
 using ProductApi.Models.Entities;
 
@@ -8,29 +13,149 @@ namespace ProductApi.Repositories.Implementation
 {
     public class ProductRepository : IProductRepository
     {
-        public Task<ProductDto> GetProductById(Guid productId)
+        private readonly ProductsContext _context;
+        private readonly IMapper _mapper;
+        private readonly ILogger<ProductRepository> _logger;
+
+        public ProductRepository(ProductsContext context, IMapper mapper, ILogger<ProductRepository> logger)
         {
-            throw new NotImplementedException();
+            _context = context;
+            _mapper = mapper;
+            _logger = logger;
         }
 
-        public Task<List<ProductDto>> GetAllProducts()
+        /// <summary>
+        /// This is method to fetch product by product ID.
+        /// Only active product will be return.
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public async Task<ProductDto> GetProductById(Guid productId)
         {
-            throw new NotImplementedException();
+            var product = await _context.Products.FirstOrDefaultAsync(p =>
+                p.Id == productId && p.Status == (int) ProductStatusEnum.Active);
+
+
+            if (product == null)
+            {
+                // For providing more info about user behaviour. In case client side cache legacy id or other cases.
+                HandleLogging(LogLevel.Information, $"ProductId {productId} return null result");
+            }
+
+            return _mapper.Map<Product, ProductDto>(product);
         }
 
-        public Task<ProductDto> CreateProduct(Product product)
+        /// <summary>
+        /// This method is for fetching all active product.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<ProductDto>> GetAllProducts()
         {
-            throw new NotImplementedException();
+            var products = await _context.Products
+                .Where(p => p.Status != (int) ProductStatusEnum.Inactive)
+                .ToListAsync();
+            return _mapper.Map<List<Product>, List<ProductDto>>(products);
         }
 
-        public Task<ProductDto> UpdateProduct(Product product)
+        /// <summary>
+        /// Method for creating new Product.
+        /// Validation against duplication, etc should be done on services level.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        public async Task<ProductDto> CreateProduct(ProductDto product)
         {
-            throw new NotImplementedException();
+            var entity = _mapper.Map<ProductDto, Product>(product);
+            entity.Status = (int) ProductStatusEnum.Active;
+
+            try
+            {
+                var newCreatedProduct = await _context.Products.AddAsync(entity);
+                await _context.SaveChangesAsync();
+                return _mapper.Map<Product, ProductDto>(newCreatedProduct.Entity);
+            }
+            catch (Exception e)
+            {
+                HandleLogging(LogLevel.Error, $"Fail to create product option.", e);
+            }
+
+            return null;
+        }
+        
+        /// <summary>
+        /// This is method for updating product.
+        ///
+        /// Only Active Product could be updated.
+        ///
+        /// Exception would be thrown if can't find product via provided ID.
+        /// Exception would be thrown if attempt to update disable product.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        public async Task<ProductDto> UpdateProduct(ProductDto product)
+        {
+            try
+            {
+                var source = await _context.Products.FirstOrDefaultAsync(p =>p.Id == product.Id);
+                if (source == null)
+                {
+                    HandleLogging(LogLevel.Error, $"Can not find product {product.Id} during update.");
+                }
+
+                if (source.Status == (int) ProductStatusEnum.Active)
+                {
+                    HandleLogging(LogLevel.Error, $"Can not update product {product.Id} due to it's inactive.");
+                }
+
+                source.Name = product.Name;
+                source.Description = product.Description;
+                source.Price = product.Price;
+                source.DeliveryPrice = product.DeliveryPrice;
+                _context.Products.Update(source);
+                await _context.SaveChangesAsync();
+
+                return _mapper.Map<Product, ProductDto>(source);
+            }
+            catch (Exception e)
+            {
+                HandleLogging(LogLevel.Error, $"Fail to update product {product.Id}.", e);
+            }
+
+            return null;
         }
 
-        public Task DeleteProduct(Guid id)
+        public async Task<bool> DeleteProduct(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var source = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+                if (source == null)
+                {
+                    HandleLogging(LogLevel.Error, $"Can not find product option {id} during deleting.", null);
+                }
+
+                source.Status = (int) ProductStatusEnum.Inactive;
+                _context.Products.Update(source);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception e)
+            {
+                HandleLogging(LogLevel.Error, $"Fail to remove product option {id}.", e);
+            }
+
+            return false;
+        }
+
+        private void HandleLogging(LogLevel level, string message, Exception e = null)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                message = $"Error throw within ProductRepository, Exception: {e?.Message}";
+            }
+
+            _logger.Log(level, message);
+            throw new Exception(message, e ?? new Exception());
         }
     }
 }

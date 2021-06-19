@@ -83,9 +83,8 @@ namespace ProductApi.Services.Implementation
             return result;
         }
 
-        public async Task<bool> DeleteProductOption(Guid productId, Guid optionId)
+        public async Task<bool> DeleteProductOption(Guid optionId)
         {
-            await ValidateProductOption(productId, optionId);
             return await _productOptionRepo.DeleteProductOption(optionId);
         }
 

@@ -13,7 +13,7 @@ namespace ProductApi.Models.Entities
 
         [Required] public string Description { get; set; }
 
-        [ForeignKey("BlogForeignKey")]
+        [ForeignKey("ProductProductOptionFk")]
         public Product Product { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace ProductApi.Models.Entities
         {
             modelBuilder.Entity<Product>()
                 .HasKey(p => p.Id);
-
+            
             modelBuilder.Entity<ProductOption>()
                 .HasKey(po => po.Id);
 

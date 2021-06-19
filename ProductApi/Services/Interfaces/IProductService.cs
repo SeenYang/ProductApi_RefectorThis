@@ -10,8 +10,8 @@ namespace ProductApi.Services.Interfaces
     {
         Task<ProductDto> GetProductById(Guid productId);
         Task<List<ProductDto>> GetAllProducts();
-        Task<ProductDto> CreateProduct(Product product);
-        Task<ProductDto> UpdateProduct(Guid id, Product product);
+        Task<ProductDto> CreateProduct(ProductDto product);
+        Task<ProductDto> UpdateProduct(Guid id, ProductDto product);
         Task DeleteProduct(Guid id);
     }
 }

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,9 @@ namespace ProductApi
         {
             // IoC
             services.RegisterServices(Configuration);
+            
+            // Add AutoMapper
+            services.AddAutoMapper(Assembly.GetAssembly(typeof(Startup)));
             
             // DB setup
             services.AddDbContext<ProductsContext>(options => 

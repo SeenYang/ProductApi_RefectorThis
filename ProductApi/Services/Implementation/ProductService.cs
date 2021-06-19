@@ -34,7 +34,7 @@ namespace ProductApi.Services.Implementation
             return await _repo.GetAllProducts();
         }
 
-        public async Task<ProductDto> CreateProduct(Product product)
+        public async Task<ProductDto> CreateProduct(ProductDto product)
         {
             var newProduct = await _repo.CreateProduct(product);
 
@@ -43,7 +43,7 @@ namespace ProductApi.Services.Implementation
             return returnResult;
         }
 
-        public async Task<ProductDto> UpdateProduct(Guid id, Product product)
+        public async Task<ProductDto> UpdateProduct(Guid id, ProductDto product)
         {
             // todo Validation
             return await _repo.UpdateProduct(product);

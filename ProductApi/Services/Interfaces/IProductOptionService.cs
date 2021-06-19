@@ -11,6 +11,6 @@ namespace ProductApi.Services.Interfaces
         Task<List<ProductOptionDto>> GetAllProductOptionsByProductId(Guid productId);
         Task<ProductOptionDto> CreateProductOption(ProductOptionDto option);
         Task<ProductOptionDto> UpdateProductOption(ProductOptionDto option);
-        Task<bool> DeleteProductOption(Guid productId, Guid id);
+        Task<bool> DeleteProductOption(Guid id);
     }
 }

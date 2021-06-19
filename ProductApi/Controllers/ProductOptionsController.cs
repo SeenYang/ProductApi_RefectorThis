@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductApi.Models.Dtos;
-using ProductApi.Models.Entities;
-using ProductApi.Services;
 using ProductApi.Services.Interfaces;
 
 namespace ProductApi.Controllers
@@ -15,16 +12,13 @@ namespace ProductApi.Controllers
     [ApiController]
     public class ProductOptionsController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly IProductOptionService _productOptionService;
         private readonly IProductService _productService;
 
-        public ProductOptionsController(IProductService productService, IProductOptionService productOptionService,
-            IMapper mapper)
+        public ProductOptionsController(IProductService productService, IProductOptionService productOptionService)
         {
             _productService = productService;
             _productOptionService = productOptionService;
-            _mapper = mapper;
         }
 
         [HttpGet]
@@ -32,6 +26,11 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetOptions(Guid productId)
         {
+            if (!GeneralGuidCheck(productId))
+            {
+                return BadRequest($"invalid Id {productId}");
+            }
+
             if (await _productService.GetProductById(productId) == null) return NotFound("Product not found");
 
             var productOptions = await _productOptionService.GetAllProductOptionsByProductId(productId);
@@ -44,12 +43,20 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetOption(Guid productId, Guid id)
         {
-            if (await _productService.GetProductById(productId) == null) return NotFound("Product not found");
+            if (!GeneralGuidCheck(productId))
+            {
+                return BadRequest($"invalid Id {productId}");
+            }
+
+            if (!GeneralGuidCheck(productId))
+            {
+                return BadRequest($"invalid Option Id {id}");
+            }
 
             var productOption = await _productOptionService.GetProductOptionById(id);
 
-            if (productOption == null) return NotFound("Product option not found");
-            
+            if (productOption == null) return NotFound($"Product option not found. Option Id: {id}");
+
             return Ok(productOption);
         }
 
@@ -58,39 +65,68 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateOption(Guid productId, [FromBody] ProductOptionDto option)
         {
-            if (await _productService.GetProductById(productId) == null) return NotFound("Product not found");
+            if (!GeneralGuidCheck(productId))
+            {
+                return BadRequest($"invalid Id {productId}");
+            }
 
-            // todo: validate productId vs option.productId
+            if (!GeneralGuidCheck(option.Id))
+            {
+                return BadRequest($"invalid Option Id {option.Id}");
+            }
+
+            if (option.ProductId != productId)
+            {
+                return BadRequest($"Product Id does not match.");
+            }
+
             var createdOption = await _productOptionService.CreateProductOption(option);
+
             return Ok(createdOption);
         }
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateOption(Guid productId, Guid id, ProductOptionDto option)
+        public async Task<IActionResult> UpdateOption(Guid productId, [FromBody] ProductOptionDto option)
         {
-            if (await _productService.GetProductById(productId) == null) return NotFound("Product not found");
+            if (!GeneralGuidCheck(productId))
+            {
+                return BadRequest($"invalid Id {productId}");
+            }
 
-            if (await _productOptionService.GetProductOptionById(id) == null)
-                return NotFound("Product option not found");
+            if (!GeneralGuidCheck(option.Id))
+            {
+                return BadRequest($"invalid Option Id {option.Id}");
+            }
+
+            if (option.ProductId != productId)
+            {
+                return BadRequest($"Product Id does not match.");
+            }
 
             var updatedProductOption = await _productOptionService.UpdateProductOption(option);
+
             return Ok(updatedProductOption);
         }
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteOption(Guid productId, Guid id)
+        public async Task<IActionResult> DeleteOption(Guid id)
         {
-            if (await _productService.GetProductById(productId) == null) return NotFound("Product not found");
-
-            if (await _productOptionService.GetProductOptionById(id) == null)
-                return NotFound("Product option not found");
-
-            await _productOptionService.DeleteProductOption(productId, id);
+            if (!GeneralGuidCheck(id))
+            {
+                return BadRequest($"invalid Option Id {id}");
+            }
+            
+            await _productOptionService.DeleteProductOption(id);
             return Ok();
+        }
+
+        private bool GeneralGuidCheck(Guid id)
+        {
+            return id != Guid.Empty;
         }
     }
 }

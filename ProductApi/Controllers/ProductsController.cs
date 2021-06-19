@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductApi.Models.Dtos;
-using ProductApi.Models.Entities;
-using ProductApi.Services;
 using ProductApi.Services.Interfaces;
 
 namespace ProductApi.Controllers
 {
-    [Route("api/[controller]s")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : Controller
     {
@@ -24,7 +20,7 @@ namespace ProductApi.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get([FromQuery] string name = null)
+        public async Task<IActionResult> Get()
         {
             var products = await _productService.GetAllProducts();
             return Ok(products);
@@ -35,6 +31,11 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Guid id)
         {
+            if (!GeneralGuidCheck(id))
+            {
+                return BadRequest($"invalid product Id {id}");
+            }
+
             var product = await _productService.GetProductById(id);
 
             return product == null ? NotFound("Product not found.") : Ok(product);
@@ -43,11 +44,8 @@ namespace ProductApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post(Product product)
+        public async Task<IActionResult> Post(ProductDto product)
         {
-            // todo: validation on dto level.
-            // todo: return 400 bad request if input invalid.
-
             var createdProduct = await _productService.CreateProduct(product);
             return Created("GetProduct", createdProduct.Id);
         }
@@ -55,11 +53,17 @@ namespace ProductApi.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update(Guid id, Product product)
+        public async Task<IActionResult> Update(Guid id, [FromBody] ProductDto product)
         {
-            // todo: validation on dto level.
-            // todo: return 400 bad request if input invalid.
+            if (!GeneralGuidCheck(id))
+            {
+                return BadRequest($"invalid product Id {id}");
+            }
+
+            if (id != product.Id)
+            {
+                return BadRequest($"Provide ID {id} does not match update product's id {product.Id}.");
+            }
 
             var updatedProduct = await _productService.UpdateProduct(id, product);
             return Ok(updatedProduct);
@@ -69,8 +73,18 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(Guid id)
         {
+            if (!GeneralGuidCheck(id))
+            {
+                return BadRequest($"invalid product Id {id}");
+            }
+
             await _productService.DeleteProduct(id);
             return Ok();
+        }
+
+        private bool GeneralGuidCheck(Guid id)
+        {
+            return id != Guid.Empty;
         }
     }
 }

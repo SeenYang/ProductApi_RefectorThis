@@ -44,15 +44,16 @@ namespace ProductApi.Repositories.Implementation
 
             try
             {
-                await _context.ProductOptions.AddAsync(entity);
+                var newCreatedProductOption = await _context.ProductOptions.AddAsync(entity);
                 await _context.SaveChangesAsync();
+                return _mapper.Map<ProductOption, ProductOptionDto>(newCreatedProductOption.Entity);
             }
             catch (Exception e)
             {
-                HandleException(LogLevel.Error, $"Fail to create product option.", e);
+                HandleLogging(LogLevel.Error, $"Fail to create product option.", e);
             }
 
-            return _mapper.Map<ProductOption, ProductOptionDto>(entity);
+            return null;
         }
 
         public async Task<ProductOptionDto> UpdateProductOption(ProductOptionDto option)
@@ -75,7 +76,7 @@ namespace ProductApi.Repositories.Implementation
             }
             catch (Exception e)
             {
-                HandleException(LogLevel.Error, $"Fail to update product option {option.Id}.", e);
+                HandleLogging(LogLevel.Error, $"Fail to update product option {option.Id}.", e);
             }
 
             return option;
@@ -88,21 +89,28 @@ namespace ProductApi.Repositories.Implementation
                 var source = await _context.ProductOptions.FirstOrDefaultAsync(po => po.Id == id);
                 if (source == null)
                 {
-                    HandleException(LogLevel.Error, $"Can not find product option {id} during deleting.", null);
+                    HandleLogging(LogLevel.Error, $"Can not find product option {id} during deleting.", null);
                 }
 
                 _context.ProductOptions.Remove(source);
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception e)
             {
-                HandleException(LogLevel.Error, $"Fail to remove product option {id}.", e);
+                HandleLogging(LogLevel.Error, $"Fail to remove product option {id}.", e);
             }
 
-            return true;
+            return false;
         }
 
-        private void HandleException(LogLevel level, string message, Exception e)
+        private void HandleLogging(LogLevel level, string message, Exception e)
         {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                message = $"Error throw within ProductOptionRepository, Exception: {e.Message}";
+            }
+
             _logger.Log(level, message);
             throw new Exception(message, e ?? new Exception());
         }
