@@ -15,21 +15,19 @@ namespace ProductApi.Tests.Repositories
 {
     public class ProductRepository_Tests
     {
-        private readonly Guid productId1 = Guid.NewGuid();
-        private readonly Guid productId2 = Guid.NewGuid();
-        private readonly Guid productId3 = Guid.NewGuid();
-        private readonly Guid productId4 = Guid.NewGuid();
+        private readonly Guid _productId1 = Guid.NewGuid();
+        private readonly Guid _productId2 = Guid.NewGuid();
+        private readonly Guid _productId3 = Guid.NewGuid();
+        private readonly Guid _productId4 = Guid.NewGuid();
 
-        private IMapper _mapper;
-        private readonly Mock<ILogger<ProductRepository>> _logger;
-        private IProductRepository _repo;
-        private ProductsContext _context;
+        private readonly IProductRepository _repo;
+        private readonly ProductsContext _context;
 
         public ProductRepository_Tests()
         {
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new ProductProfile()); });
-            _mapper = mappingConfig.CreateMapper();
-            _logger = new Mock<ILogger<ProductRepository>>();
+            var mapper = mappingConfig.CreateMapper();
+            var logger = new Mock<ILogger<ProductRepository>>();
 
             var options = new DbContextOptionsBuilder<ProductsContext>()
                 .UseInMemoryDatabase(databaseName: "ImMemoryDB")
@@ -37,7 +35,7 @@ namespace ProductApi.Tests.Repositories
             _context = new ProductsContext(options);
             var activeProduct = new Product
             {
-                Id = productId2,
+                Id = _productId2,
                 Name = "active product for update",
                 Price = 1.99m,
                 DeliveryPrice = 0.3m,
@@ -47,7 +45,7 @@ namespace ProductApi.Tests.Repositories
 
             var inactiveProduct = new Product
             {
-                Id = productId3,
+                Id = _productId3,
                 Name = "Inactive product for update",
                 Price = 1.99m,
                 DeliveryPrice = 0.3m,
@@ -57,7 +55,7 @@ namespace ProductApi.Tests.Repositories
 
             var productForDelete = new Product
             {
-                Id = productId4,
+                Id = _productId4,
                 Name = "Product for delete test",
                 Price = 19.99m,
                 DeliveryPrice = 1.12m,
@@ -68,7 +66,7 @@ namespace ProductApi.Tests.Repositories
             _context.Products.Add(inactiveProduct);
             _context.Products.Add(productForDelete);
             _context.SaveChanges();
-            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+            _repo = new ProductRepository(_context, mapper, logger.Object);
         }
 
         #region GetProductById
@@ -76,22 +74,22 @@ namespace ProductApi.Tests.Repositories
         [Fact(DisplayName = "GetProductById no data match")]
         public async void Test1()
         {
-            var result = await _repo.GetProductById(productId1);
+            var result = await _repo.GetProductById(_productId1);
             Assert.Null(result);
         }
 
         [Fact(DisplayName = "GetProductById with data match")]
         public async void Test2()
         {
-            var result = await _repo.GetProductById(productId2);
+            var result = await _repo.GetProductById(_productId2);
             Assert.NotNull(result);
-            Assert.Equal(productId2, result.Id);
+            Assert.Equal(_productId2, result.Id);
         }
 
         [Fact(DisplayName = "GetProductById data match but not active")]
         public async void Test3()
         {
-            var result = await _repo.GetProductById(productId3);
+            var result = await _repo.GetProductById(_productId3);
             Assert.Null(result);
         }
 
@@ -130,7 +128,7 @@ namespace ProductApi.Tests.Repositories
         {
             var target = new ProductDto
             {
-                Id = productId2,
+                Id = _productId2,
                 Name = "Product Update",
                 Price = 19.99m,
                 DeliveryPrice = 1.12m,
@@ -139,7 +137,7 @@ namespace ProductApi.Tests.Repositories
 
             var result = await _repo.UpdateProduct(target);
 
-            var verifyResult = await _context.Products.FirstOrDefaultAsync(p => p.Id == productId2);
+            var verifyResult = await _context.Products.FirstOrDefaultAsync(p => p.Id == _productId2);
             Assert.NotNull(result);
             Assert.NotNull(verifyResult);
             Assert.Equal(verifyResult.Name, verifyResult.Name);
@@ -174,7 +172,7 @@ namespace ProductApi.Tests.Repositories
         {
             var target = new ProductDto
             {
-                Id = productId3,
+                Id = _productId3,
                 Name = "Product Update",
                 Price = 19.99m,
                 DeliveryPrice = 1.12m,
@@ -199,11 +197,11 @@ namespace ProductApi.Tests.Repositories
         [Fact(DisplayName = "Delete Product")]
         public async void Delete_Test1()
         {
-            var exception = await Record.ExceptionAsync(async () => { await _repo.DeleteProduct(productId4); });
+            var exception = await Record.ExceptionAsync(async () => { await _repo.DeleteProduct(_productId4); });
 
             Assert.Null(exception);
 
-            var verifyResult = await _context.Products.FirstOrDefaultAsync(p => p.Id == productId4);
+            var verifyResult = await _context.Products.FirstOrDefaultAsync(p => p.Id == _productId4);
             Assert.NotNull(verifyResult);
             Assert.Equal((int) ProductStatusEnum.Inactive, verifyResult.Status);
         }

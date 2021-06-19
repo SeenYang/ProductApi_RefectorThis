@@ -17,7 +17,10 @@ namespace ProductApi.Repositories.Implementation
         private readonly IMapper _mapper;
         private readonly ILogger<ProductOptionRepository> _logger;
 
-        public ProductOptionRepository(ProductsContext context, ILogger<ProductOptionRepository> logger, IMapper mapper)
+        public ProductOptionRepository(
+            ProductsContext context,
+            IMapper mapper,
+            ILogger<ProductOptionRepository> logger)
         {
             _context = context;
             _logger = logger;
@@ -68,8 +71,7 @@ namespace ProductApi.Repositories.Implementation
 
                 source.Name = option.Name;
                 source.Description = option.Description;
-                source.ProductId = option.ProductId;
-                // todo: confirm whether need update(source);
+                // _context.Update(source);
                 await _context.SaveChangesAsync();
 
                 return _mapper.Map<ProductOption, ProductOptionDto>(source);
