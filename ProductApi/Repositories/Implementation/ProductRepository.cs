@@ -55,6 +55,15 @@ namespace ProductApi.Repositories.Implementation
             return _mapper.Map<List<Product>, List<ProductDto>>(products);
         }
 
+        public async Task<List<ProductDto>> GetProductsByName(string name)
+        {
+            var products = await _context.Products
+                .Where(p => p.Status != (int) ProductStatusEnum.Inactive)
+                .Where(p => string.Equals(name, p.Name))
+                .ToListAsync();
+            return _mapper.Map<List<Product>, List<ProductDto>>(products);
+        }
+
         /// <summary>
         ///     Method for creating new Product.
         ///     Validation against duplication, etc should be done on services level.

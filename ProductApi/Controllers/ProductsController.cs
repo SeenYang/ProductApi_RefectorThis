@@ -20,10 +20,18 @@ namespace ProductApi.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string name)
         {
-            var products = await _productService.GetAllProducts();
-            return Ok(products);
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                var products = await _productService.GetAllProducts();
+                return Ok(new ProductsDto {Items = products});
+            }
+            else
+            {
+                var products = await _productService.GetProductsByName(name);
+                return Ok(new ProductsDto {Items = products});
+            }
         }
 
         [HttpGet("{id}", Name = "GetProduct")]

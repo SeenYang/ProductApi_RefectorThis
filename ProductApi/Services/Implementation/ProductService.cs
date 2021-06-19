@@ -31,6 +31,11 @@ namespace ProductApi.Services.Implementation
             return await _repo.GetAllProducts();
         }
 
+        public async Task<List<ProductDto>> GetProductsByName(string name)
+        {
+            return await _repo.GetProductsByName(name);
+        }
+
         public async Task<ProductDto> CreateProduct(ProductDto product)
         {
             return await _repo.CreateProduct(product);
