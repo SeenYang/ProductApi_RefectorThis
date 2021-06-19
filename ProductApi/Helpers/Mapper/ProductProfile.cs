@@ -9,6 +9,7 @@ namespace ProductApi.Helpers.Mapper
         public ProductProfile()
         {
             CreateMap<Product, ProductDto>().ReverseMap();
+            CreateMap<ProductOption, ProductOptionDto>().ReverseMap();
         }
     }
 }

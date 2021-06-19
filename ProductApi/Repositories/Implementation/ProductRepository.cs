@@ -76,7 +76,7 @@ namespace ProductApi.Repositories.Implementation
             }
             catch (Exception e)
             {
-                HandleLogging(LogLevel.Error, $"Fail to create product option.", e);
+                HandleLogging(LogLevel.Error, $"Fail to create product.", e);
             }
 
             return null;
@@ -102,7 +102,7 @@ namespace ProductApi.Repositories.Implementation
                     HandleLogging(LogLevel.Error, $"Can not find product {product.Id} during update.");
                 }
 
-                if (source.Status == (int) ProductStatusEnum.Active)
+                if (source.Status == (int) ProductStatusEnum.Inactive)
                 {
                     HandleLogging(LogLevel.Error, $"Can not update product {product.Id} due to it's inactive.");
                 }
@@ -131,7 +131,7 @@ namespace ProductApi.Repositories.Implementation
                 var source = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
                 if (source == null)
                 {
-                    HandleLogging(LogLevel.Error, $"Can not find product option {id} during deleting.", null);
+                    HandleLogging(LogLevel.Error, $"Can not find product {id} during deleting.", null);
                 }
 
                 source.Status = (int) ProductStatusEnum.Inactive;
@@ -141,7 +141,7 @@ namespace ProductApi.Repositories.Implementation
             }
             catch (Exception e)
             {
-                HandleLogging(LogLevel.Error, $"Fail to remove product option {id}.", e);
+                HandleLogging(LogLevel.Error, $"Fail to remove product {id}.", e);
             }
 
             return false;
@@ -155,7 +155,10 @@ namespace ProductApi.Repositories.Implementation
             }
 
             _logger.Log(level, message);
-            throw new Exception(message, e ?? new Exception());
+            if (level == LogLevel.Error)
+            {
+                throw new Exception(message, e ?? new Exception());
+            }
         }
     }
 }
