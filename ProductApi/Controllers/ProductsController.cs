@@ -65,7 +65,7 @@ namespace ProductApi.Controllers
                 return BadRequest($"Provide ID {id} does not match update product's id {product.Id}.");
             }
 
-            var updatedProduct = await _productService.UpdateProduct(id, product);
+            var updatedProduct = await _productService.UpdateProduct(product);
             return Ok(updatedProduct);
         }
 

@@ -36,22 +36,38 @@ namespace ProductApi.Services.Implementation
 
         public async Task<ProductDto> CreateProduct(ProductDto product)
         {
-            var newProduct = await _repo.CreateProduct(product);
-
-            var returnResult =  await GetProductById(newProduct.Id);
-            
-            return returnResult;
+            return await _repo.CreateProduct(product);
         }
 
-        public async Task<ProductDto> UpdateProduct(Guid id, ProductDto product)
+        public async Task<ProductDto> UpdateProduct(ProductDto product)
         {
-            // todo Validation
+            await ValidateProductId(product.Id);
             return await _repo.UpdateProduct(product);
         }
 
         public async Task DeleteProduct(Guid id)
         {
+            await ValidateProductId(id);
             await _repo.DeleteProduct(id);
+        }
+
+        private async Task ValidateProductId(Guid productId)
+        {
+            if (productId == Guid.Empty)
+            {
+                var msg = $"Product Id can not be empty.";
+                _logger.LogError(msg);
+                throw new Exception(msg);
+            }
+
+            var product = await _repo.GetProductById(productId);
+
+            if (product == null)
+            {
+                var msg = $"Can not find product with id {productId}.";
+                _logger.LogError(msg);
+                throw new Exception(msg);
+            }
         }
     }
 }
