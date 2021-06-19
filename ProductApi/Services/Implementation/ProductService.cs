@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ProductApi.Models.Dtos;
-using ProductApi.Models.Entities;
 using ProductApi.Repositories;
-using ProductApi.Repositories.Interfaces;
 using ProductApi.Services.Interfaces;
 
 namespace ProductApi.Services.Implementation
 {
     /// <summary>
-    /// 
     /// </summary>
     public class ProductService : IProductService
     {
         private readonly IProductRepository _repo;
-        private ILogger<ProductService> _logger;
+        private readonly ILogger<ProductService> _logger;
 
         public ProductService(IProductRepository repo, ILogger<ProductService> logger)
         {
@@ -55,7 +52,7 @@ namespace ProductApi.Services.Implementation
         {
             if (productId == Guid.Empty)
             {
-                var msg = $"Product Id can not be empty.";
+                var msg = "Product Id can not be empty.";
                 _logger.LogError(msg);
                 throw new Exception(msg);
             }

@@ -25,23 +25,23 @@ namespace ProductApi
         {
             // IoC
             services.RegisterServices(Configuration);
-            
+
             // Add AutoMapper
             services.AddAutoMapper(Assembly.GetAssembly(typeof(Startup)));
-            
+
             // DB setup
-            services.AddDbContext<ProductsContext>(options => 
+            services.AddDbContext<ProductsContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-            
+
             // TODO DI registry
-            
-            
+
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "ProductApi", Version = "v1"});
             });
-            
+
             // allow CORS
             services.AddCors(o => o.AddPolicy("AllowOrigin",
                 builder =>

@@ -15,13 +15,13 @@ namespace ProductApi.Tests.Repositories
 {
     public class ProductRepository_Tests
     {
+        private readonly ProductsContext _context;
         private readonly Guid _productId1 = Guid.NewGuid();
         private readonly Guid _productId2 = Guid.NewGuid();
         private readonly Guid _productId3 = Guid.NewGuid();
         private readonly Guid _productId4 = Guid.NewGuid();
 
         private readonly IProductRepository _repo;
-        private readonly ProductsContext _context;
 
         public ProductRepository_Tests()
         {
@@ -30,7 +30,7 @@ namespace ProductApi.Tests.Repositories
             var logger = new Mock<ILogger<ProductRepository>>();
 
             var options = new DbContextOptionsBuilder<ProductsContext>()
-                .UseInMemoryDatabase(databaseName: "ImMemoryDB")
+                .UseInMemoryDatabase("ImMemoryDB")
                 .Options;
             _context = new ProductsContext(options);
             var activeProduct = new Product
@@ -69,32 +69,6 @@ namespace ProductApi.Tests.Repositories
             _repo = new ProductRepository(_context, mapper, logger.Object);
         }
 
-        #region GetProductById
-
-        [Fact(DisplayName = "GetProductById no data match")]
-        public async void Test1()
-        {
-            var result = await _repo.GetProductById(_productId1);
-            Assert.Null(result);
-        }
-
-        [Fact(DisplayName = "GetProductById with data match")]
-        public async void Test2()
-        {
-            var result = await _repo.GetProductById(_productId2);
-            Assert.NotNull(result);
-            Assert.Equal(_productId2, result.Id);
-        }
-
-        [Fact(DisplayName = "GetProductById data match but not active")]
-        public async void Test3()
-        {
-            var result = await _repo.GetProductById(_productId3);
-            Assert.Null(result);
-        }
-
-        #endregion GetProductById
-
         #region CreateProduct
 
         [Fact(DisplayName = "Create Product")]
@@ -120,6 +94,32 @@ namespace ProductApi.Tests.Repositories
         }
 
         #endregion endregion
+
+        #region GetProductById
+
+        [Fact(DisplayName = "GetProductById no data match")]
+        public async void Test1()
+        {
+            var result = await _repo.GetProductById(_productId1);
+            Assert.Null(result);
+        }
+
+        [Fact(DisplayName = "GetProductById with data match")]
+        public async void Test2()
+        {
+            var result = await _repo.GetProductById(_productId2);
+            Assert.NotNull(result);
+            Assert.Equal(_productId2, result.Id);
+        }
+
+        [Fact(DisplayName = "GetProductById data match but not active")]
+        public async void Test3()
+        {
+            var result = await _repo.GetProductById(_productId3);
+            Assert.Null(result);
+        }
+
+        #endregion GetProductById
 
         #region UpdateProduct
 

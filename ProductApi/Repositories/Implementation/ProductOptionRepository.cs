@@ -14,8 +14,8 @@ namespace ProductApi.Repositories.Implementation
     public class ProductOptionRepository : IProductOptionRepository
     {
         private readonly ProductsContext _context;
-        private readonly IMapper _mapper;
         private readonly ILogger<ProductOptionRepository> _logger;
+        private readonly IMapper _mapper;
 
         public ProductOptionRepository(
             ProductsContext context,
@@ -53,7 +53,7 @@ namespace ProductApi.Repositories.Implementation
             }
             catch (Exception e)
             {
-                HandleLogging(LogLevel.Error, $"Fail to create product option.", e);
+                HandleLogging(LogLevel.Error, "Fail to create product option.", e);
             }
 
             return null;
@@ -64,10 +64,7 @@ namespace ProductApi.Repositories.Implementation
             try
             {
                 var source = await _context.ProductOptions.FirstOrDefaultAsync(po => po.Id == option.Id);
-                if (source == null)
-                {
-                    throw new Exception($"Can not find product option {option.Id} during update.");
-                }
+                if (source == null) throw new Exception($"Can not find product option {option.Id} during update.");
 
                 source.Name = option.Name;
                 source.Description = option.Description;
@@ -90,9 +87,7 @@ namespace ProductApi.Repositories.Implementation
             {
                 var source = await _context.ProductOptions.FirstOrDefaultAsync(po => po.Id == id);
                 if (source == null)
-                {
                     HandleLogging(LogLevel.Error, $"Can not find product option {id} during deleting.", null);
-                }
 
                 _context.ProductOptions.Remove(source);
                 await _context.SaveChangesAsync();
@@ -109,9 +104,7 @@ namespace ProductApi.Repositories.Implementation
         private void HandleLogging(LogLevel level, string message, Exception e)
         {
             if (string.IsNullOrWhiteSpace(message))
-            {
                 message = $"Error throw within ProductOptionRepository, Exception: {e.Message}";
-            }
 
             _logger.Log(level, message);
             throw new Exception(message, e ?? new Exception());

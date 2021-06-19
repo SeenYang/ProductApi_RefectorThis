@@ -5,5 +5,6 @@
     &lt;TestId&gt;xUnit::EC7DA6D0-66B5-4F17-9243-C5352DE970E5::net5.0::ProductApi.Tests.Repositories.ProductOptionRepository_Tests&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::EC7DA6D0-66B5-4F17-9243-C5352DE970E5::net5.0::ProductApi.Tests.Services.ProductServices_Tests.Update_Test1&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::EC7DA6D0-66B5-4F17-9243-C5352DE970E5::net5.0::ProductApi.Tests.Services.ProductServices_Tests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::EC7DA6D0-66B5-4F17-9243-C5352DE970E5::net5.0::ProductApi.Tests.Services.ProductOptionServices_Tests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

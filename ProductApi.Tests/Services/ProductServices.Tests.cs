@@ -1,15 +1,8 @@
 using System;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ProductApi.Helpers;
-using ProductApi.Helpers.Mapper;
 using ProductApi.Models.Dtos;
-using ProductApi.Models.Entities;
 using ProductApi.Repositories;
-using ProductApi.Repositories.Implementation;
 using ProductApi.Services.Implementation;
 using ProductApi.Services.Interfaces;
 using Xunit;
@@ -18,11 +11,11 @@ namespace ProductApi.Tests.Services
 {
     public class ProductServices_Tests
     {
+        private readonly Mock<ILogger<ProductService>> _logger;
         private readonly Guid _productId2 = Guid.NewGuid();
         private readonly Guid _productId3 = Guid.NewGuid();
 
         private readonly Mock<IProductRepository> _repo;
-        private readonly Mock<ILogger<ProductService>> _logger;
         private readonly IProductService _service;
 
         public ProductServices_Tests()
@@ -96,7 +89,7 @@ namespace ProductApi.Tests.Services
             var exception = await Record.ExceptionAsync(async () => { await _service.UpdateProduct(target); });
 
             Assert.NotNull(exception);
-            Assert.Equal($"Product Id can not be empty.", exception.Message);
+            Assert.Equal("Product Id can not be empty.", exception.Message);
         }
 
         #endregion
@@ -109,11 +102,8 @@ namespace ProductApi.Tests.Services
             _repo.Setup(r => r.GetProductById(_productId3)).ReturnsAsync(new ProductDto {Id = _productId3});
             _repo.Setup(r => r.DeleteProduct(It.IsAny<Guid>()))
                 .ReturnsAsync(true);
-            
-            var exception = await Record.ExceptionAsync(async () =>
-            {
-                await _service.DeleteProduct(_productId3);
-            });
+
+            var exception = await Record.ExceptionAsync(async () => { await _service.DeleteProduct(_productId3); });
 
             Assert.Null(exception);
         }
@@ -135,7 +125,7 @@ namespace ProductApi.Tests.Services
             var exception = await Record.ExceptionAsync(async () => { await _service.DeleteProduct(Guid.Empty); });
 
             Assert.NotNull(exception);
-            Assert.Equal($"Product Id can not be empty.", exception.Message);
+            Assert.Equal("Product Id can not be empty.", exception.Message);
         }
 
         #endregion

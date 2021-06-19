@@ -11,9 +11,9 @@ namespace ProductApi.Services.Implementation
 {
     public class ProductOptionService : IProductOptionService
     {
-        private readonly IProductRepository _productRepo;
-        private readonly IProductOptionRepository _productOptionRepo;
         private readonly ILogger<ProductOptionService> _logger;
+        private readonly IProductOptionRepository _productOptionRepo;
+        private readonly IProductRepository _productRepo;
 
 
         public ProductOptionService(IProductRepository productRepo,
@@ -25,9 +25,8 @@ namespace ProductApi.Services.Implementation
         }
 
         /// <summary>
-        /// Method for fetching product option by option Id.
-        ///
-        /// Null will be return if no option found.
+        ///     Method for fetching product option by option Id.
+        ///     Null will be return if no option found.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -37,9 +36,8 @@ namespace ProductApi.Services.Implementation
         }
 
         /// <summary>
-        /// Method for getting all product options by providing product id
-        ///
-        /// Null will be return if there's no options attached to specified product.
+        ///     Method for getting all product options by providing product id
+        ///     Null will be return if there's no options attached to specified product.
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
@@ -47,12 +45,11 @@ namespace ProductApi.Services.Implementation
         {
             return await _productOptionRepo.GetAllProductOptionsByProductId(productId);
         }
-        
+
         /// <summary>
-        /// Method for creating new product option.
-        ///
-        /// If product can not be found, it will throw exception.
-        /// If productOption's productId doesn't match product's id, it will throw exception.
+        ///     Method for creating new product option.
+        ///     If product can not be found, it will throw exception.
+        ///     If productOption's productId doesn't match product's id, it will throw exception.
         /// </summary>
         /// <param name="option"></param>
         /// <returns></returns>
@@ -68,9 +65,8 @@ namespace ProductApi.Services.Implementation
         }
 
         /// <summary>
-        /// Method to update product option by providing productId, target option.
-        /// 
-        /// option.productId and productId should be validated on controller level.
+        ///     Method to update product option by providing productId, target option.
+        ///     option.productId and productId should be validated on controller level.
         /// </summary>
         /// <param name="option"></param>
         /// <returns></returns>
@@ -89,11 +85,10 @@ namespace ProductApi.Services.Implementation
         }
 
         /// <summary>
-        /// Due to product to productOption is 1-to-N relationship,
-        /// we have to make sure each option attaches to one product.
-        ///
-        /// For now there's only used while create/update productOption.
-        /// Please extend or update definition once extend usage in the future.
+        ///     Due to product to productOption is 1-to-N relationship,
+        ///     we have to make sure each option attaches to one product.
+        ///     For now there's only used while create/update productOption.
+        ///     Please extend or update definition once extend usage in the future.
         /// </summary>
         /// <param name="productId"></param>
         /// <exception cref="Exception"></exception>
@@ -111,6 +106,20 @@ namespace ProductApi.Services.Implementation
 
         private async Task ValidateProductOption(Guid productId, Guid optionId)
         {
+            if (productId == Guid.Empty)
+            {
+                var msg = "Product Id can not be empty.";
+                _logger.LogError(msg);
+                throw new Exception(msg);
+            }
+
+            if (optionId == Guid.Empty)
+            {
+                var msg = "Product option Id can not be empty.";
+                _logger.LogError(msg);
+                throw new Exception(msg);
+            }
+
             var result = await _productOptionRepo.GetProductOptionById(optionId);
 
             if (result == null)

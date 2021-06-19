@@ -31,10 +31,7 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Guid id)
         {
-            if (!GeneralGuidCheck(id))
-            {
-                return BadRequest($"invalid product Id {id}");
-            }
+            if (!GeneralGuidCheck(id)) return BadRequest($"invalid product Id {id}");
 
             var product = await _productService.GetProductById(id);
 
@@ -55,15 +52,10 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update(Guid id, [FromBody] ProductDto product)
         {
-            if (!GeneralGuidCheck(id))
-            {
-                return BadRequest($"invalid product Id {id}");
-            }
+            if (!GeneralGuidCheck(id)) return BadRequest($"invalid product Id {id}");
 
             if (id != product.Id)
-            {
                 return BadRequest($"Provide ID {id} does not match update product's id {product.Id}.");
-            }
 
             var updatedProduct = await _productService.UpdateProduct(product);
             return Ok(updatedProduct);
@@ -73,10 +65,7 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (!GeneralGuidCheck(id))
-            {
-                return BadRequest($"invalid product Id {id}");
-            }
+            if (!GeneralGuidCheck(id)) return BadRequest($"invalid product Id {id}");
 
             await _productService.DeleteProduct(id);
             return Ok();

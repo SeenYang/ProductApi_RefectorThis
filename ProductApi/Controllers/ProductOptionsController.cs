@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductApi.Models.Dtos;
@@ -26,10 +25,7 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetOptions(Guid productId)
         {
-            if (!GeneralGuidCheck(productId))
-            {
-                return BadRequest($"invalid Id {productId}");
-            }
+            if (!GeneralGuidCheck(productId)) return BadRequest($"invalid Id {productId}");
 
             if (await _productService.GetProductById(productId) == null) return NotFound("Product not found");
 
@@ -43,15 +39,9 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetOption(Guid productId, Guid id)
         {
-            if (!GeneralGuidCheck(productId))
-            {
-                return BadRequest($"invalid Id {productId}");
-            }
+            if (!GeneralGuidCheck(productId)) return BadRequest($"invalid Id {productId}");
 
-            if (!GeneralGuidCheck(productId))
-            {
-                return BadRequest($"invalid Option Id {id}");
-            }
+            if (!GeneralGuidCheck(productId)) return BadRequest($"invalid Option Id {id}");
 
             var productOption = await _productOptionService.GetProductOptionById(id);
 
@@ -65,20 +55,11 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateOption(Guid productId, [FromBody] ProductOptionDto option)
         {
-            if (!GeneralGuidCheck(productId))
-            {
-                return BadRequest($"invalid Id {productId}");
-            }
+            if (!GeneralGuidCheck(productId)) return BadRequest($"invalid Id {productId}");
 
-            if (!GeneralGuidCheck(option.Id))
-            {
-                return BadRequest($"invalid Option Id {option.Id}");
-            }
+            if (!GeneralGuidCheck(option.Id)) return BadRequest($"invalid Option Id {option.Id}");
 
-            if (option.ProductId != productId)
-            {
-                return BadRequest($"Product Id does not match.");
-            }
+            if (option.ProductId != productId) return BadRequest("Product Id does not match.");
 
             var createdOption = await _productOptionService.CreateProductOption(option);
 
@@ -90,20 +71,11 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateOption(Guid productId, [FromBody] ProductOptionDto option)
         {
-            if (!GeneralGuidCheck(productId))
-            {
-                return BadRequest($"invalid Id {productId}");
-            }
+            if (!GeneralGuidCheck(productId)) return BadRequest($"invalid Id {productId}");
 
-            if (!GeneralGuidCheck(option.Id))
-            {
-                return BadRequest($"invalid Option Id {option.Id}");
-            }
+            if (!GeneralGuidCheck(option.Id)) return BadRequest($"invalid Option Id {option.Id}");
 
-            if (option.ProductId != productId)
-            {
-                return BadRequest($"Product Id does not match.");
-            }
+            if (option.ProductId != productId) return BadRequest("Product Id does not match.");
 
             var updatedProductOption = await _productOptionService.UpdateProductOption(option);
 
@@ -115,11 +87,8 @@ namespace ProductApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteOption(Guid id)
         {
-            if (!GeneralGuidCheck(id))
-            {
-                return BadRequest($"invalid Option Id {id}");
-            }
-            
+            if (!GeneralGuidCheck(id)) return BadRequest($"invalid Option Id {id}");
+
             await _productOptionService.DeleteProductOption(id);
             return Ok();
         }

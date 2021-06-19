@@ -3,11 +3,9 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ProductApi.Helpers;
 using ProductApi.Helpers.Mapper;
 using ProductApi.Models.Dtos;
 using ProductApi.Models.Entities;
-using ProductApi.Repositories;
 using ProductApi.Repositories.Implementation;
 using ProductApi.Repositories.Interfaces;
 using Xunit;
@@ -16,6 +14,7 @@ namespace ProductApi.Tests.Repositories
 {
     public class ProductOptionRepository_Tests
     {
+        private readonly ProductsContext _context;
         private readonly Guid _optionId1 = Guid.NewGuid();
         private readonly Guid _optionId2 = Guid.NewGuid();
         private readonly Guid _optionId3 = Guid.NewGuid();
@@ -24,7 +23,6 @@ namespace ProductApi.Tests.Repositories
         private readonly Guid _productId3 = Guid.NewGuid();
 
         private readonly IProductOptionRepository _repo;
-        private readonly ProductsContext _context;
 
         public ProductOptionRepository_Tests()
         {
@@ -33,7 +31,7 @@ namespace ProductApi.Tests.Repositories
             var logger = new Mock<ILogger<ProductOptionRepository>>();
 
             var options = new DbContextOptionsBuilder<ProductsContext>()
-                .UseInMemoryDatabase(databaseName: "ImMemoryDB")
+                .UseInMemoryDatabase("ImMemoryDB")
                 .Options;
             _context = new ProductsContext(options);
             var product1Option1 = new ProductOption
@@ -65,6 +63,30 @@ namespace ProductApi.Tests.Repositories
             _context.SaveChanges();
             _repo = new ProductOptionRepository(_context, mapper, logger.Object);
         }
+
+        #region CreateProductOption
+
+        [Fact(DisplayName = "Create Product Option")]
+        public async void Create_Test1()
+        {
+            var newOption = new ProductOptionDto
+            {
+                Name = "newProductoption",
+                Description = "new product option for product 3",
+                ProductId = _productId3
+            };
+
+            var result = await _repo.CreateProductOption(newOption);
+
+            var verifyResult = await _context.ProductOptions.FirstOrDefaultAsync(p => p.Id == result.Id);
+            Assert.NotNull(result);
+            Assert.NotNull(verifyResult);
+            Assert.Equal(result.Name, verifyResult.Name);
+            Assert.Equal(result.Description, verifyResult.Description);
+            Assert.Equal(result.ProductId, verifyResult.ProductId);
+        }
+
+        #endregion
 
         #region GetProductOptionTest
 
@@ -102,30 +124,6 @@ namespace ProductApi.Tests.Repositories
         }
 
         #endregion GetProductById
-
-        #region CreateProductOption
-
-        [Fact(DisplayName = "Create Product Option")]
-        public async void Create_Test1()
-        {
-            var newOption = new ProductOptionDto
-            {
-                Name = "newProductoption",
-                Description = "new product option for product 3",
-                ProductId = _productId3
-            };
-
-            var result = await _repo.CreateProductOption(newOption);
-
-            var verifyResult = await _context.ProductOptions.FirstOrDefaultAsync(p => p.Id == result.Id);
-            Assert.NotNull(result);
-            Assert.NotNull(verifyResult);
-            Assert.Equal(result.Name, verifyResult.Name);
-            Assert.Equal(result.Description, verifyResult.Description);
-            Assert.Equal(result.ProductId, verifyResult.ProductId);
-        }
-
-        #endregion
 
         #region UpdateProductOption
 

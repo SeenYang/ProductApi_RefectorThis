@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ProductApi.Models.Entities
 {
@@ -16,7 +15,7 @@ namespace ProductApi.Models.Entities
         {
             modelBuilder.Entity<Product>()
                 .HasKey(p => p.Id);
-            
+
             modelBuilder.Entity<ProductOption>()
                 .HasKey(po => po.Id);
 

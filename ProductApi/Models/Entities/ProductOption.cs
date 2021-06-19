@@ -13,7 +13,6 @@ namespace ProductApi.Models.Entities
 
         [Required] public string Description { get; set; }
 
-        [ForeignKey("ProductProductOptionFk")]
-        public Product Product { get; set; }
+        [ForeignKey("ProductProductOptionFk")] public Product Product { get; set; }
     }
 }

@@ -14,8 +14,8 @@ namespace ProductApi.Repositories.Implementation
     public class ProductRepository : IProductRepository
     {
         private readonly ProductsContext _context;
-        private readonly IMapper _mapper;
         private readonly ILogger<ProductRepository> _logger;
+        private readonly IMapper _mapper;
 
         public ProductRepository(ProductsContext context, IMapper mapper, ILogger<ProductRepository> logger)
         {
@@ -25,8 +25,8 @@ namespace ProductApi.Repositories.Implementation
         }
 
         /// <summary>
-        /// This is method to fetch product by product ID.
-        /// Only active product will be return.
+        ///     This is method to fetch product by product ID.
+        ///     Only active product will be return.
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
@@ -37,16 +37,14 @@ namespace ProductApi.Repositories.Implementation
 
 
             if (product == null)
-            {
                 // For providing more info about user behaviour. In case client side cache legacy id or other cases.
                 HandleLogging(LogLevel.Information, $"ProductId {productId} return null result");
-            }
 
             return _mapper.Map<Product, ProductDto>(product);
         }
 
         /// <summary>
-        /// This method is for fetching all active product.
+        ///     This method is for fetching all active product.
         /// </summary>
         /// <returns></returns>
         public async Task<List<ProductDto>> GetAllProducts()
@@ -58,8 +56,8 @@ namespace ProductApi.Repositories.Implementation
         }
 
         /// <summary>
-        /// Method for creating new Product.
-        /// Validation against duplication, etc should be done on services level.
+        ///     Method for creating new Product.
+        ///     Validation against duplication, etc should be done on services level.
         /// </summary>
         /// <param name="product"></param>
         /// <returns></returns>
@@ -76,19 +74,17 @@ namespace ProductApi.Repositories.Implementation
             }
             catch (Exception e)
             {
-                HandleLogging(LogLevel.Error, $"Fail to create product.", e);
+                HandleLogging(LogLevel.Error, "Fail to create product.", e);
             }
 
             return null;
         }
-        
+
         /// <summary>
-        /// This is method for updating product.
-        ///
-        /// Only Active Product could be updated.
-        ///
-        /// Exception would be thrown if can't find product via provided ID.
-        /// Exception would be thrown if attempt to update disable product.
+        ///     This is method for updating product.
+        ///     Only Active Product could be updated.
+        ///     Exception would be thrown if can't find product via provided ID.
+        ///     Exception would be thrown if attempt to update disable product.
         /// </summary>
         /// <param name="product"></param>
         /// <returns></returns>
@@ -96,16 +92,11 @@ namespace ProductApi.Repositories.Implementation
         {
             try
             {
-                var source = await _context.Products.FirstOrDefaultAsync(p =>p.Id == product.Id);
-                if (source == null)
-                {
-                    HandleLogging(LogLevel.Error, $"Can not find product {product.Id} during update.");
-                }
+                var source = await _context.Products.FirstOrDefaultAsync(p => p.Id == product.Id);
+                if (source == null) HandleLogging(LogLevel.Error, $"Can not find product {product.Id} during update.");
 
                 if (source.Status == (int) ProductStatusEnum.Inactive)
-                {
                     HandleLogging(LogLevel.Error, $"Can not update product {product.Id} due to it's inactive.");
-                }
 
                 source.Name = product.Name;
                 source.Description = product.Description;
@@ -129,10 +120,7 @@ namespace ProductApi.Repositories.Implementation
             try
             {
                 var source = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-                if (source == null)
-                {
-                    HandleLogging(LogLevel.Error, $"Can not find product {id} during deleting.", null);
-                }
+                if (source == null) HandleLogging(LogLevel.Error, $"Can not find product {id} during deleting.");
 
                 source.Status = (int) ProductStatusEnum.Inactive;
                 _context.Products.Update(source);
@@ -150,15 +138,10 @@ namespace ProductApi.Repositories.Implementation
         private void HandleLogging(LogLevel level, string message, Exception e = null)
         {
             if (string.IsNullOrWhiteSpace(message))
-            {
                 message = $"Error throw within ProductRepository, Exception: {e?.Message}";
-            }
 
             _logger.Log(level, message);
-            if (level == LogLevel.Error)
-            {
-                throw new Exception(message, e ?? new Exception());
-            }
+            if (level == LogLevel.Error) throw new Exception(message, e ?? new Exception());
         }
     }
 }
