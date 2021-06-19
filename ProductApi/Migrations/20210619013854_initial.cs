@@ -31,8 +31,7 @@ namespace ProductApi.Migrations
                     ProductId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
-                    ProductProductOptionFK = table.Column<Guid>(type: "TEXT", nullable: true),
-                    ProductProductOptionFk = table.Column<Guid>(type: "TEXT", nullable: true)
+                    ProductProductOptionFK = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

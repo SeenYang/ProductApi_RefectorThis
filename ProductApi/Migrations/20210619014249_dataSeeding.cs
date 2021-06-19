@@ -13,18 +13,18 @@ namespace ProductApi.Migrations
             
             migrationBuilder.InsertData(
                 table: "Products",
-                columns: new[] {"Id", "Name", "Description", "Price", "DeliveryPrice"},
-                values: new object[] { product1Id, "Headphone", "JBL noise cancelling headphone", 69.99, 10.00 });
+                columns: new[] {"Id", "Name", "Description", "Price", "DeliveryPrice", "Status" },
+                values: new object[] { product1Id, "Headphone", "JBL noise cancelling headphone", 69.99, 10.00, 0 });
 
             migrationBuilder.InsertData(
                 table: "Products",
-                columns: new[] { "Id", "Name", "Description", "Price", "DeliveryPrice" },
-                values: new object[] { product2Id, "Apple Watch", "Apple watch series 5", 599.00, 15.00 });
+                columns: new[] { "Id", "Name", "Description", "Price", "DeliveryPrice", "Status" },
+                values: new object[] { product2Id, "Apple Watch", "Apple watch series 5", 599.00, 15.00, 0 });
 
             migrationBuilder.InsertData(
                 table: "Products",
-                columns: new[] { "Id", "Name", "Description", "Price", "DeliveryPrice" },
-                values: new object[] { product3Id, "Razer Mouse", "Best gaming mouse", 89.99, 10.00 });
+                columns: new[] { "Id", "Name", "Description", "Price", "DeliveryPrice", "Status" },
+                values: new object[] { product3Id, "Razer Mouse", "Best gaming mouse", 89.99, 10.00, 1 });
 
             migrationBuilder.InsertData(
                 table: "ProductOptions",
