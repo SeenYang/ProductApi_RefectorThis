@@ -12,13 +12,10 @@ namespace ProductApi.Tests.Services
 {
     public class ProductOptionServices_Tests
     {
-        private readonly Mock<ILogger<ProductOptionService>> _logger;
         private readonly Guid _optionId1 = Guid.NewGuid();
         private readonly Guid _optionId2 = Guid.NewGuid();
         private readonly Guid _optionId3 = Guid.NewGuid();
-        private readonly Guid _optionId4 = Guid.NewGuid();
         private readonly Mock<IProductOptionRepository> _poRepo;
-        private readonly Mock<IProductRepository> _pRepo;
 
         private readonly Guid _productId1 = Guid.NewGuid();
         private readonly Guid _productId2 = Guid.NewGuid();
@@ -26,17 +23,17 @@ namespace ProductApi.Tests.Services
 
         public ProductOptionServices_Tests()
         {
-            _pRepo = new Mock<IProductRepository>();
+            var pRepo = new Mock<IProductRepository>();
             _poRepo = new Mock<IProductOptionRepository>();
-            _logger = new Mock<ILogger<ProductOptionService>>();
+            var logger = new Mock<ILogger<ProductOptionService>>();
 
-            _pRepo.Setup(p => p.GetProductById(_productId1))
+            pRepo.Setup(p => p.GetProductById(_productId1))
                 .ReturnsAsync(new ProductDto
                 {
                     Id = _productId1,
                     Name = "active product"
                 });
-            _pRepo.Setup(p => p.GetProductById(_productId2))
+            pRepo.Setup(p => p.GetProductById(_productId2))
                 .ReturnsAsync((ProductDto) null);
 
             _poRepo.Setup(po => po.GetProductOptionById(_optionId1)).ReturnsAsync(new ProductOptionDto
@@ -48,7 +45,7 @@ namespace ProductApi.Tests.Services
             _poRepo.Setup(po => po.GetProductOptionById(_optionId2))
                 .ReturnsAsync((ProductOptionDto) null);
 
-            _service = new ProductOptionService(_pRepo.Object, _poRepo.Object, _logger.Object);
+            _service = new ProductOptionService(pRepo.Object, _poRepo.Object, logger.Object);
         }
 
         #region UpdateProduct

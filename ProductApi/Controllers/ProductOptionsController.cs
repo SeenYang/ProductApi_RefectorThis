@@ -31,7 +31,7 @@ namespace ProductApi.Controllers
 
             var productOptions = await _productOptionService.GetAllProductOptionsByProductId(productId);
 
-            return Ok(productOptions);
+            return Ok(new ProductOptionsDto {Items = productOptions});
         }
 
         [HttpGet("{id}", Name = "GetProductOption")]
@@ -56,8 +56,6 @@ namespace ProductApi.Controllers
         public async Task<IActionResult> CreateOption(Guid productId, [FromBody] ProductOptionDto option)
         {
             if (!GeneralGuidCheck(productId)) return BadRequest($"invalid Id {productId}");
-
-            if (!GeneralGuidCheck(option.Id)) return BadRequest($"invalid Option Id {option.Id}");
 
             if (option.ProductId != productId) return BadRequest("Product Id does not match.");
 

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using ProductApi.Helpers;
 using ProductApi.IoC;
 using ProductApi.Models.Entities;
 
@@ -33,9 +34,6 @@ namespace ProductApi
             services.AddDbContext<ProductsContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
-            // TODO DI registry
-
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -61,6 +59,9 @@ namespace ProductApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductApi v1"));
             }
+
+            // Register global api error handling
+            app.UseMiddleware<GlobalErrorHandlerMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseRouting();

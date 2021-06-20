@@ -16,9 +16,9 @@ namespace ProductApi.Tests.Repositories
 {
     public class ProductRepository_Tests
     {
-        private ProductsContext _context;
-        private readonly IMapper _mapper;
         private readonly Mock<ILogger<ProductRepository>> _logger;
+        private readonly IMapper _mapper;
+        private ProductsContext _context;
         private IProductRepository _repo;
 
         public ProductRepository_Tests()

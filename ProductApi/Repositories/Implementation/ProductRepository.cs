@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ProductApi.Helpers;
+using ProductApi.Helpers.CustomiseExceptions;
 using ProductApi.Models.Dtos;
 using ProductApi.Models.Entities;
 
@@ -150,7 +151,7 @@ namespace ProductApi.Repositories.Implementation
                 message = $"Error throw within ProductRepository, Exception: {e?.Message}";
 
             _logger.Log(level, message);
-            if (level == LogLevel.Error) throw new Exception(message, e ?? new Exception());
+            if (level == LogLevel.Error) throw new ProductApiValidationException(message, e ?? new Exception());
         }
     }
 }

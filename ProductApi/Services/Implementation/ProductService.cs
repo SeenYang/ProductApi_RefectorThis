@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using ProductApi.Helpers.CustomiseExceptions;
 using ProductApi.Models.Dtos;
 using ProductApi.Repositories;
 using ProductApi.Services.Interfaces;
@@ -12,8 +13,8 @@ namespace ProductApi.Services.Implementation
     /// </summary>
     public class ProductService : IProductService
     {
-        private readonly IProductRepository _repo;
         private readonly ILogger<ProductService> _logger;
+        private readonly IProductRepository _repo;
 
         public ProductService(IProductRepository repo, ILogger<ProductService> logger)
         {
@@ -59,7 +60,7 @@ namespace ProductApi.Services.Implementation
             {
                 var msg = "Product Id can not be empty.";
                 _logger.LogError(msg);
-                throw new Exception(msg);
+                throw new ProductApiValidationException(msg);
             }
 
             var product = await _repo.GetProductById(productId);
@@ -68,7 +69,7 @@ namespace ProductApi.Services.Implementation
             {
                 var msg = $"Can not find product with id {productId}.";
                 _logger.LogError(msg);
-                throw new Exception(msg);
+                throw new ProductApiValidationException(msg);
             }
         }
     }

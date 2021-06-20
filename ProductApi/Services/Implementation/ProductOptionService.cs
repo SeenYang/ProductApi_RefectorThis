@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using ProductApi.Helpers.CustomiseExceptions;
 using ProductApi.Models.Dtos;
 using ProductApi.Repositories;
 using ProductApi.Repositories.Interfaces;
@@ -100,7 +101,7 @@ namespace ProductApi.Services.Implementation
             {
                 var msg = $"Can not find product with id {productId}.";
                 _logger.LogError(msg);
-                throw new Exception(msg);
+                throw new ProductApiValidationException(msg);
             }
         }
 
@@ -110,14 +111,14 @@ namespace ProductApi.Services.Implementation
             {
                 var msg = "Product Id can not be empty.";
                 _logger.LogError(msg);
-                throw new Exception(msg);
+                throw new ProductApiValidationException(msg);
             }
 
             if (optionId == Guid.Empty)
             {
                 var msg = "Product option Id can not be empty.";
                 _logger.LogError(msg);
-                throw new Exception(msg);
+                throw new ProductApiValidationException(msg);
             }
 
             var result = await _productOptionRepo.GetProductOptionById(optionId);
@@ -126,7 +127,7 @@ namespace ProductApi.Services.Implementation
             {
                 var msg = $"Can not find product option {optionId} under product {productId}.";
                 _logger.LogError(msg);
-                throw new Exception(msg);
+                throw new ProductApiValidationException(msg);
             }
 
             if (result.ProductId != productId)
@@ -134,7 +135,7 @@ namespace ProductApi.Services.Implementation
                 var msg =
                     $"Product Option (Id:{optionId})'s product ID doesn't match provided product Id {productId}. ";
                 _logger.LogError(msg);
-                throw new Exception(msg);
+                throw new ProductApiValidationException(msg);
             }
         }
     }
