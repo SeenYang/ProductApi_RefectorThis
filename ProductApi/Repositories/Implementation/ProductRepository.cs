@@ -111,7 +111,7 @@ namespace ProductApi.Repositories.Implementation
                 source.Description = product.Description;
                 source.Price = product.Price;
                 source.DeliveryPrice = product.DeliveryPrice;
-                _context.Products.Update(source);
+                // _context.Products.Update(source);
                 await _context.SaveChangesAsync();
 
                 return _mapper.Map<Product, ProductDto>(source);

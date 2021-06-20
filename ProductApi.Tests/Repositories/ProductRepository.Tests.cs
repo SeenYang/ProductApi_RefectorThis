@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,65 +16,28 @@ namespace ProductApi.Tests.Repositories
 {
     public class ProductRepository_Tests
     {
-        private readonly ProductsContext _context;
-        private readonly Guid _productId1 = Guid.NewGuid();
-        private readonly Guid _productId2 = Guid.NewGuid();
-        private readonly Guid _productId3 = Guid.NewGuid();
-        private readonly Guid _productId4 = Guid.NewGuid();
-
-        private readonly IProductRepository _repo;
+        private ProductsContext _context;
+        private readonly IMapper _mapper;
+        private readonly Mock<ILogger<ProductRepository>> _logger;
+        private IProductRepository _repo;
 
         public ProductRepository_Tests()
         {
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new ProductProfile()); });
-            var mapper = mappingConfig.CreateMapper();
-            var logger = new Mock<ILogger<ProductRepository>>();
-
-            var options = new DbContextOptionsBuilder<ProductsContext>()
-                .UseInMemoryDatabase("ImMemoryDB")
-                .Options;
-            _context = new ProductsContext(options);
-            var activeProduct = new Product
-            {
-                Id = _productId2,
-                Name = "active product for update",
-                Price = 1.99m,
-                DeliveryPrice = 0.3m,
-                Description = "product for update test.",
-                Status = (int) ProductStatusEnum.Active
-            };
-
-            var inactiveProduct = new Product
-            {
-                Id = _productId3,
-                Name = "Inactive product for update",
-                Price = 1.99m,
-                DeliveryPrice = 0.3m,
-                Description = "product for update test.",
-                Status = (int) ProductStatusEnum.Inactive
-            };
-
-            var productForDelete = new Product
-            {
-                Id = _productId4,
-                Name = "Product for delete test",
-                Price = 19.99m,
-                DeliveryPrice = 1.12m,
-                Description = "New product for test. Delete",
-                Status = (int) ProductStatusEnum.Inactive
-            };
-            _context.Products.Add(activeProduct);
-            _context.Products.Add(inactiveProduct);
-            _context.Products.Add(productForDelete);
-            _context.SaveChanges();
-            _repo = new ProductRepository(_context, mapper, logger.Object);
+            _mapper = mappingConfig.CreateMapper();
+            _logger = new Mock<ILogger<ProductRepository>>();
         }
 
-        #region CreateProduct
+        #region Create Product
 
         [Fact(DisplayName = "Create Product")]
         public async void Create_Test1()
         {
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
             var newProduct = new ProductDto
             {
                 Name = "NewProduct0",
@@ -81,6 +45,8 @@ namespace ProductApi.Tests.Repositories
                 DeliveryPrice = 0.12m,
                 Description = "New product for test."
             };
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
 
             var result = await _repo.CreateProduct(newProduct);
 
@@ -95,40 +61,178 @@ namespace ProductApi.Tests.Repositories
 
         #endregion endregion
 
-        #region GetProductById
+        #region Get Product
 
         [Fact(DisplayName = "GetProductById no data match")]
-        public async void Test1()
+        public async void GetProduct_Test1()
         {
-            var result = await _repo.GetProductById(_productId1);
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+
+            var result = await _repo.GetProductById(Guid.NewGuid());
             Assert.Null(result);
         }
 
         [Fact(DisplayName = "GetProductById with data match")]
-        public async void Test2()
+        public async void GetProduct_Test2()
         {
-            var result = await _repo.GetProductById(_productId2);
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+            var activeProduct = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = "active product for update",
+                Price = 1.99m,
+                DeliveryPrice = 0.3m,
+                Description = "product for update test.",
+                Status = (int) ProductStatusEnum.Active
+            };
+            await _context.Products.AddAsync(activeProduct);
+            await _context.SaveChangesAsync();
+
+            var result = await _repo.GetProductById(activeProduct.Id);
             Assert.NotNull(result);
-            Assert.Equal(_productId2, result.Id);
+            Assert.Equal(activeProduct.Id, result.Id);
         }
 
         [Fact(DisplayName = "GetProductById data match but not active")]
-        public async void Test3()
+        public async void GetProduct_Test3()
         {
-            var result = await _repo.GetProductById(_productId3);
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+            var inactiveProduct = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = "Inactive product for update",
+                Price = 1.99m,
+                DeliveryPrice = 0.3m,
+                Description = "product for update test.",
+                Status = (int) ProductStatusEnum.Inactive
+            };
+            await _context.Products.AddAsync(inactiveProduct);
+            await _context.SaveChangesAsync();
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+
+            var result = await _repo.GetProductById(inactiveProduct.Id);
             Assert.Null(result);
         }
 
-        #endregion GetProductById
+        [Fact(DisplayName = "GetAllProducts with valid data")]
+        public async void GetProduct_Test4()
+        {
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+            var activeProduct1 = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = "active product for update",
+                Price = 1.99m,
+                DeliveryPrice = 0.3m,
+                Description = "product for update test.",
+                Status = (int) ProductStatusEnum.Active
+            };
+            var activeProduct2 = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = "active product for update",
+                Price = 1.99m,
+                DeliveryPrice = 0.3m,
+                Description = "product for update test.",
+                Status = (int) ProductStatusEnum.Active
+            };
+            await _context.Products.AddAsync(activeProduct1);
+            await _context.Products.AddAsync(activeProduct2);
+            await _context.SaveChangesAsync();
+
+            var result = await _repo.GetAllProducts();
+            var target = _context.Products.Count(p => p.Status == (int) ProductStatusEnum.Active);
+            Assert.NotNull(result);
+            Assert.Equal(target, result.Count);
+        }
+
+        [Fact(DisplayName = "GetProductByName with valid data")]
+        public async void GetProduct_Test5()
+        {
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+            var activeProduct1 = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = "active product for update",
+                Price = 1.99m,
+                DeliveryPrice = 0.3m,
+                Description = "product for update test.",
+                Status = (int) ProductStatusEnum.Active
+            };
+            await _context.Products.AddAsync(activeProduct1);
+            await _context.SaveChangesAsync();
+
+            var result = await _repo.GetProductsByName(activeProduct1.Name);
+            Assert.NotNull(result);
+            Assert.Single(result);
+        }
+
+        [Fact(DisplayName = "GetProductByName with no valid data")]
+        public async void GetProduct_Test6()
+        {
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+
+            var result = await _repo.GetProductsByName("Stupid name with no product matches");
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        #endregion Get Product
 
         #region UpdateProduct
 
         [Fact(DisplayName = "Update Product")]
         public async void Update_Test1()
         {
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+            var activeProduct = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = "active product for update",
+                Price = 1.99m,
+                DeliveryPrice = 0.3m,
+                Description = "product for update test.",
+                Status = (int) ProductStatusEnum.Active
+            };
+            await _context.Products.AddAsync(activeProduct);
+            await _context.SaveChangesAsync();
+
             var target = new ProductDto
             {
-                Id = _productId2,
+                Id = activeProduct.Id,
                 Name = "Product Update",
                 Price = 19.99m,
                 DeliveryPrice = 1.12m,
@@ -137,7 +241,7 @@ namespace ProductApi.Tests.Repositories
 
             var result = await _repo.UpdateProduct(target);
 
-            var verifyResult = await _context.Products.FirstOrDefaultAsync(p => p.Id == _productId2);
+            var verifyResult = await _context.Products.FirstOrDefaultAsync(p => p.Id == activeProduct.Id);
             Assert.NotNull(result);
             Assert.NotNull(verifyResult);
             Assert.Equal(verifyResult.Name, verifyResult.Name);
@@ -148,6 +252,13 @@ namespace ProductApi.Tests.Repositories
         [Fact(DisplayName = "Update Product - Product not found")]
         public async void Update_Test2()
         {
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+
             var target = new ProductDto
             {
                 Id = Guid.NewGuid(),
@@ -170,9 +281,27 @@ namespace ProductApi.Tests.Repositories
         [Fact(DisplayName = "Update Product - Product not active")]
         public async void Update_Test3()
         {
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+            var inActiveProduct = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = "inactive product for update",
+                Price = 1.99m,
+                DeliveryPrice = 0.3m,
+                Description = "product for update test.",
+                Status = (int) ProductStatusEnum.Inactive
+            };
+            await _context.Products.AddAsync(inActiveProduct);
+            await _context.SaveChangesAsync();
+
             var target = new ProductDto
             {
-                Id = _productId3,
+                Id = inActiveProduct.Id,
                 Name = "Product Update",
                 Price = 19.99m,
                 DeliveryPrice = 1.12m,
@@ -197,11 +326,32 @@ namespace ProductApi.Tests.Repositories
         [Fact(DisplayName = "Delete Product")]
         public async void Delete_Test1()
         {
-            var exception = await Record.ExceptionAsync(async () => { await _repo.DeleteProduct(_productId4); });
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+            var productForDelete = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = "Product for delete test",
+                Price = 19.99m,
+                DeliveryPrice = 1.12m,
+                Description = "New product for test. Delete",
+                Status = (int) ProductStatusEnum.Active
+            };
+            await _context.Products.AddAsync(productForDelete);
+            await _context.SaveChangesAsync();
+
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                await _repo.DeleteProduct(productForDelete.Id);
+            });
 
             Assert.Null(exception);
 
-            var verifyResult = await _context.Products.FirstOrDefaultAsync(p => p.Id == _productId4);
+            var verifyResult = await _context.Products.FirstOrDefaultAsync(p => p.Id == productForDelete.Id);
             Assert.NotNull(verifyResult);
             Assert.Equal((int) ProductStatusEnum.Inactive, verifyResult.Status);
         }
@@ -209,6 +359,13 @@ namespace ProductApi.Tests.Repositories
         [Fact(DisplayName = "Delete Product - product can't find")]
         public async void Delete_Test2()
         {
+            var options = new DbContextOptionsBuilder<ProductsContext>()
+                .UseInMemoryDatabase("ImMemoryDB")
+                .Options;
+            _context = new ProductsContext(options);
+
+            _repo = new ProductRepository(_context, _mapper, _logger.Object);
+
             var fakeGuid = Guid.NewGuid();
             var exception = await Record.ExceptionAsync(async () => { await _repo.DeleteProduct(fakeGuid); });
 
