@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -5,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using NLog.Extensions.Logging;
+using NLog.Web;
 using ProductApi.Helpers;
 using ProductApi.IoC;
 using ProductApi.Models.Entities;
@@ -14,13 +18,18 @@ namespace ProductApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
         public IConfiguration Configuration { get; }
 
+        public Startup(IConfiguration configuration)
+        {
+            var temp = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNET_ENV")}.json", true, true)
+                .Build();
+        }
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -34,6 +43,13 @@ namespace ProductApi
             services.AddDbContext<ProductsContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
+            // Logging
+            services.AddLogging(log =>
+            {
+                log.ClearProviders();
+                log.SetMinimumLevel(LogLevel.Trace);
+                log.AddNLog(Configuration.GetSection("Logging"));
+            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

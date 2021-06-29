@@ -1,0 +1,27 @@
+2021-06-29 17:32:39.9459 Info Message Template Auto Format enabled
+2021-06-29 17:32:39.9712 Info Loading assembly: NLog.Web.AspNetCore
+2021-06-29 17:32:40.0260 Info Adding target FileTarget(Name=allfile)
+2021-06-29 17:32:40.0284 Info Adding target FileTarget(Name=ownFile-web)
+2021-06-29 17:32:40.0296 Warn Skipping unrecognized property 'tolower=true` for ${level} (NLog.LayoutRenderers.LevelLayoutRenderer)
+2021-06-29 17:32:40.0320 Info Adding target ConsoleTarget(Name=lifetimeConsole)
+2021-06-29 17:32:40.1669 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=69, FilePath=/Users/yangsiyin/Code/PetProject/ProductApi_RefectorThis/ProductApi/bin/Debug/net5.0/NLog.config
+2021-06-29 17:32:40.1809 Info Configuration initialized.
+2021-06-29 17:32:40.1817 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.7.10.13013. Product version: 4.7.10+8142cd035d2c212fd82a4eb0081aed68da713b9e. GlobalAssemblyCache: False
+2021-06-29 17:32:55.4403 Info Message Template Auto Format enabled
+2021-06-29 17:32:55.4582 Info Loading assembly: NLog.Web.AspNetCore
+2021-06-29 17:32:55.4944 Info Adding target FileTarget(Name=allfile)
+2021-06-29 17:32:55.4960 Info Adding target FileTarget(Name=ownFile-web)
+2021-06-29 17:32:55.4960 Warn Skipping unrecognized property 'tolower=true` for ${level} (NLog.LayoutRenderers.LevelLayoutRenderer)
+2021-06-29 17:32:55.4982 Info Adding target ConsoleTarget(Name=lifetimeConsole)
+2021-06-29 17:32:55.6154 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=69, FilePath=/Users/yangsiyin/Code/PetProject/ProductApi_RefectorThis/ProductApi/bin/Release/net5.0/NLog.config
+2021-06-29 17:32:55.6286 Info Configuration initialized.
+2021-06-29 17:32:55.6294 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.7.10.13013. Product version: 4.7.10+8142cd035d2c212fd82a4eb0081aed68da713b9e. GlobalAssemblyCache: False
+2021-06-29 17:36:38.5955 Info Message Template Auto Format enabled
+2021-06-29 17:36:38.6245 Info Loading assembly: NLog.Web.AspNetCore
+2021-06-29 17:36:38.6548 Info Adding target FileTarget(Name=allfile)
+2021-06-29 17:36:38.6568 Info Adding target FileTarget(Name=ownFile-web)
+2021-06-29 17:36:38.6579 Warn Skipping unrecognized property 'tolower=true` for ${level} (NLog.LayoutRenderers.LevelLayoutRenderer)
+2021-06-29 17:36:38.6600 Info Adding target ConsoleTarget(Name=lifetimeConsole)
+2021-06-29 17:36:38.7699 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=69, FilePath=/Users/yangsiyin/Code/PetProject/ProductApi_RefectorThis/ProductApi/bin/Release/net5.0/NLog.config
+2021-06-29 17:36:38.7857 Info Configuration initialized.
+2021-06-29 17:36:38.7867 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.7.10.13013. Product version: 4.7.10+8142cd035d2c212fd82a4eb0081aed68da713b9e. GlobalAssemblyCache: False
