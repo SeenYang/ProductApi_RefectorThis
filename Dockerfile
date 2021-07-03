@@ -17,4 +17,4 @@ RUN dotnet publish "ProductApi.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ProductApi.dll"]
+ENTRYPOINT ["dotnet", "ProductApi.dll", "--environment=Release"]

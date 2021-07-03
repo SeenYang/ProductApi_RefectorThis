@@ -25,3 +25,14 @@
 2021-06-29 17:36:38.7699 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=69, FilePath=/Users/yangsiyin/Code/PetProject/ProductApi_RefectorThis/ProductApi/bin/Release/net5.0/NLog.config
 2021-06-29 17:36:38.7857 Info Configuration initialized.
 2021-06-29 17:36:38.7867 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.7.10.13013. Product version: 4.7.10+8142cd035d2c212fd82a4eb0081aed68da713b9e. GlobalAssemblyCache: False
+2021-07-03 17:04:10.7726 Info Message Template Auto Format enabled
+2021-07-03 17:04:10.7881 Info Loading assembly: NLog.Web.AspNetCore
+2021-07-03 17:04:10.8236 Info Adding target FileTarget(Name=allfile)
+2021-07-03 17:04:10.8253 Info Adding target FileTarget(Name=ownFile-web)
+2021-07-03 17:04:10.8262 Warn Skipping unrecognized property 'tolower=true` for ${level} (NLog.LayoutRenderers.LevelLayoutRenderer)
+2021-07-03 17:04:10.8279 Info Adding target ConsoleTarget(Name=lifetimeConsole)
+2021-07-03 17:04:10.9108 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=69, FilePath=/Users/yangsiyin/Code/PetProject/ProductApi_RefectorThis/ProductApi/bin/Release/net5.0/NLog.config
+2021-07-03 17:04:10.9257 Info Configuration initialized.
+2021-07-03 17:04:10.9265 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.7.10.13013. Product version: 4.7.10+8142cd035d2c212fd82a4eb0081aed68da713b9e. GlobalAssemblyCache: False
+2021-07-03 17:04:38.3756 Info AppDomain Shutting down. Logger closing...
+2021-07-03 17:04:38.3964 Info Logger has been shut down.

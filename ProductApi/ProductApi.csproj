@@ -34,6 +34,9 @@
     
     <ItemGroup>
         <None Update="nlog.config" CopyToOutputDirectory="Always" />
+        <None Update="App_Data\Products.db">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

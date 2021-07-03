@@ -6,6 +6,7 @@ ProductApi/.DS_Store
 bin/
 obj/
 /packages/
+published/
 
 # ignore local log
 ProductApi/c:\temp\internal-nlog-AspNetCore.txt
