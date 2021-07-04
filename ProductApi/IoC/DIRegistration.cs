@@ -13,6 +13,7 @@ namespace ProductApi.IoC
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
             // Services
+            services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductOptionService, ProductOptionService>();
 

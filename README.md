@@ -121,7 +121,7 @@ There should be these endpoints:
 All models are specified in the `/Models` folder, but should conform to:
 
 **Product:**
-```
+```json
 {
   "Id": "01234567-89ab-cdef-0123-456789abcdef",
   "Name": "Product name",
@@ -132,7 +132,8 @@ All models are specified in the `/Models` folder, but should conform to:
 ```
 
 **Products:**
-```
+
+```json
 {
   "Items": [
     {
@@ -146,7 +147,7 @@ All models are specified in the `/Models` folder, but should conform to:
 ```
 
 **Product Option:**
-```
+```json
 {
   "Id": "01234567-89ab-cdef-0123-456789abcdef",
   "Name": "Product name",
@@ -155,7 +156,7 @@ All models are specified in the `/Models` folder, but should conform to:
 ```
 
 **Product Options:**
-```
+```json
 {
   "Items": [
     {
@@ -167,3 +168,18 @@ All models are specified in the `/Models` folder, but should conform to:
   ]
 }
 ```
+
+## Cache
+
+```
+## Before cache
+HTTP/1.1 GET https://localhost:5001/api/Products/b1d2f89c-a83b-47e6-b840-e61c9ba5d01f - - - 200 - application/json;+charset=utf-8 9114.3023ms 
+
+## Cached
+2021-07-04 10:05:13.8454|0|INFO|ProductApi.Services.Implementation.ProductService|Product b1d2f89c-a83b-47e6-b840-e61c9ba5d01f is reading from cache 
+
+HTTP/1.1 GET https://localhost:5001/api/Products/b1d2f89c-a83b-47e6-b840-e61c9ba5d01f - - - 200 - application/json;+charset=utf-8 4.3630ms 
+
+
+```
+

@@ -33,6 +33,9 @@ namespace ProductApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Turn on cache
+            services.AddMemoryCache();
+            
             // IoC
             services.RegisterServices(Configuration);
 

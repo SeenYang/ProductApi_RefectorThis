@@ -17,14 +17,16 @@ namespace ProductApi.Tests.Services
 
         private readonly Mock<IProductRepository> _repo;
         private readonly IProductService _service;
+        private readonly Mock<ICacheService> _cache;
 
         public ProductServices_Tests()
         {
             _repo = new Mock<IProductRepository>();
             _logger = new Mock<ILogger<ProductService>>();
+            _cache = new Mock<ICacheService>();
 
 
-            _service = new ProductService(_repo.Object, _logger.Object);
+            _service = new ProductService(_repo.Object, _logger.Object, _cache.Object);
         }
 
         #region UpdateProduct
