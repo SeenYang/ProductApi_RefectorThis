@@ -15,6 +15,10 @@ namespace ProductApi.Models.Entities
         {
             modelBuilder.Entity<Product>()
                 .HasKey(p => p.Id);
+            // modelBuilder.Entity<Product>()
+            //     .HasMany(p => p.ProductOptions)
+            //     .WithOne(po => po.Product)
+            //     .HasForeignKey("FK_ProductOptionProduct");
 
             modelBuilder.Entity<ProductOption>()
                 .HasKey(po => po.Id);
@@ -22,7 +26,10 @@ namespace ProductApi.Models.Entities
             modelBuilder.Entity<ProductOption>()
                 .HasOne(po => po.Product)
                 .WithMany(p => p.ProductOptions)
-                .HasForeignKey("ProductProductOptionFK");
+                .HasForeignKey(po => po.ProductId)
+                .HasConstraintName("FK_ProductOption_Product")
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

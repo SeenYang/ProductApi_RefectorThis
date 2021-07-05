@@ -33,9 +33,10 @@ namespace ProductApi.Repositories.Implementation
         /// <returns></returns>
         public async Task<ProductDto> GetProductById(Guid productId)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p =>
-                p.Id == productId && p.Status == (int) ProductStatusEnum.Active);
-
+            var product = await _context.Products
+                .Where(p => p.Id == productId && p.Status == (int) ProductStatusEnum.Active)
+                .Include(p => p.ProductOptions)
+                .FirstOrDefaultAsync();
 
             if (product == null)
                 // For providing more info about user behaviour. In case client side cache legacy id or other cases.
@@ -61,6 +62,7 @@ namespace ProductApi.Repositories.Implementation
             var products = await _context.Products
                 .Where(p => p.Status != (int) ProductStatusEnum.Inactive)
                 .Where(p => string.Equals(name, p.Name))
+                .Include(p => p.ProductOptions)
                 .ToListAsync();
             return _mapper.Map<List<Product>, List<ProductDto>>(products);
         }
@@ -112,7 +114,6 @@ namespace ProductApi.Repositories.Implementation
                 source.Description = product.Description;
                 source.Price = product.Price;
                 source.DeliveryPrice = product.DeliveryPrice;
-                // _context.Products.Update(source);
                 await _context.SaveChangesAsync();
 
                 return _mapper.Map<Product, ProductDto>(source);

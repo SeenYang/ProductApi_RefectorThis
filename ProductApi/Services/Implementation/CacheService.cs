@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using ProductApi.Services.Interfaces;
 
@@ -7,8 +6,8 @@ namespace ProductApi.Services.Implementation
 {
     public class CacheService : ICacheService
     {
-        private readonly int _defaultCacheTime = 300; // 5 min
         private readonly IMemoryCache _cache;
+        private readonly int _defaultCacheTime = 300; // 5 min
 
         public CacheService(IMemoryCache cache)
         {

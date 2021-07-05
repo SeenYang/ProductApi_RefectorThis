@@ -11,13 +11,13 @@ namespace ProductApi.Tests.Services
 {
     public class ProductServices_Tests
     {
+        private readonly Mock<ICacheService> _cache;
         private readonly Mock<ILogger<ProductService>> _logger;
         private readonly Guid _productId2 = Guid.NewGuid();
         private readonly Guid _productId3 = Guid.NewGuid();
 
         private readonly Mock<IProductRepository> _repo;
         private readonly IProductService _service;
-        private readonly Mock<ICacheService> _cache;
 
         public ProductServices_Tests()
         {

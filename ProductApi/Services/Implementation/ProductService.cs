@@ -11,9 +11,9 @@ namespace ProductApi.Services.Implementation
 {
     public class ProductService : IProductService
     {
+        private readonly ICacheService _cache;
         private readonly ILogger<ProductService> _logger;
         private readonly IProductRepository _repo;
-        private readonly ICacheService _cache;
 
         public ProductService(IProductRepository repo, ILogger<ProductService> logger, ICacheService cache)
         {

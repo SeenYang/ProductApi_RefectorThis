@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace ProductApi.Services.Interfaces
 {
     public interface ICacheService

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ProductApi.Models.Dtos
 {
@@ -13,5 +14,7 @@ namespace ProductApi.Models.Dtos
         public decimal Price { get; set; }
 
         public decimal DeliveryPrice { get; set; }
+
+        public IEnumerable<ProductOptionDto> ProductOptions { get; set; }
     }
 }

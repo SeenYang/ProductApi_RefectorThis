@@ -18,6 +18,6 @@ namespace ProductApi.Models.Entities
 
         public int Status { get; set; }
 
-        public List<ProductOption> ProductOptions { get; set; }
+        public IEnumerable<ProductOption> ProductOptions { get; set; }
     }
 }
